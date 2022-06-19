@@ -105,7 +105,7 @@
         },
         {
             "id":2,
-            "x":12,
+            "x":13,
             "y":1,
             "heading":90,
             "type":"turn_end",
@@ -113,16 +113,16 @@
         },
         {
             "id":3,
-            "x":12,
-            "y":25,
+            "x":13,
+            "y":26,
             "heading":90,
             "type":"turn_start",
             "speed": 2
         },
         {
             "id":4,
-            "x":11,
-            "y":26,
+            "x":12,
+            "y":27,
             "heading":180,
             "type":"turn_end",
             "speed": 2
@@ -140,6 +140,22 @@
             "x":-9,
             "y":25,
             "heading":270,
+            "type":"turn_end",
+            "speed": 2
+        },
+        {
+            "id":6,
+            "x":0,
+            "y":11,
+            "heading":315,
+            "type":"turn_start",
+            "speed": 2
+        },
+        {
+            "id":6,
+            "x":0,
+            "y":9,
+            "heading":225,
             "type":"turn_end",
             "speed": 2
         },

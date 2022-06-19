@@ -11,19 +11,19 @@ commands["leftMotor"] = True
 commands["rightMotor"] = True
 
 while True:
-	control = input("How to move the robot?")
-	if cmd == "w":
-		commands["leftMotor"] = True
-		commands["rightMotor"] = True
- 	elif cmd == "a":
-		commands["leftMotor"] = True
-		commands["rightMotor"] = False
-	elif cmd == "d":
-		commands["leftMotor"] = False
-		commands["rightMotor"] = True
-	elif cmd == "s":
-		commands["leftMotor"] = False
-		commands["rightMotor"] = False
-	else
-		break
-	ser.write(json.dumps(commands).encode("utf-8"))
+    cmd = input("How to move the robot?")
+    if cmd == "w":
+        commands["leftMotor"] = True
+        commands["rightMotor"] = True
+    elif cmd == "a":
+        commands["leftMotor"] = True
+        commands["rightMotor"] = False
+    elif cmd == "d":
+        commands["leftMotor"] = False
+        commands["rightMotor"] = True
+    elif cmd == "s":
+        commands["leftMotor"] = False
+        commands["rightMotor"] = False
+    else:
+        break
+    ser.write(json.dumps(commands).encode("utf-8"))
