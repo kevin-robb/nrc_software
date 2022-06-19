@@ -2,15 +2,23 @@
 
 **This branch is not intended ever to be merged into master.**
 
-The demo_sim branch is a stable build of the NRC robot software to be run in simulation for demonstration purposes.
+This branch is a stable build of the NRC robot software to be run in simulation for demonstration purposes.
 This code is verified to work in the SCR Simulator v.18 with ROS Melodic in Ubuntu 18.04 using WSL 1.
 
-## To run this code with WSL:
+## To run this code:
  - Clone the repository and switch to the demo_sim branch by running `git checkout demo_sim`.
  - If using WSL, [install VcXsrv](https://sourceforge.net/projects/vcxsrv/) and run it as specified [here](https://janbernloehr.de/2017/06/10/ros-windows#install-vcxsrv).
- - Download [Version 18 of the SCR Simulator](https://github.com/SoonerRobotics/scr_simulator/releases/tag/v18), unzip it, and run the scr_simulator.exe file.
- - From within the repo, run `roslaunch nrc_nav drive_pp_sim.launch`.
- - After the console shows rosbridge has connected to port 9090, click "Run" in the simulator to connect the client, and wait a few seconds for VcXsrv to connect and for the code to start up. If it does not connect the client, press Escape and click "Restart" in the simulator to attempt a reconnect.
+ - Download [Version 18 of the SCR Simulator](https://github.com/SoonerRobotics/scr_simulator/releases/tag/v18) and unzip it.
+    - For WSL, run the scr_simulator.exe file.
+    - On linux, run `chmod +x scr_simulator.x86_64`, `cd ~`, and `./SIMULATOR_DIRECTORY/scr_simulator_v18_linux/scr_simulator.x86_64`.
+ - Start the NRC code.
+    
+    cd ~/nrc_software/nrc_ws
+    catkin_make
+    source devel/setup.bash
+    roslaunch nrc_nav drive_pp_sim.launch
+
+ - Ensure the options for NRC are selected in the simulator. After the console shows rosbridge has connected to port 9090, click "Run" in the simulator to connect the client. You may need to wait a few seconds for VcXsrv to connect and for the code to start up. If it does not connect the client, press Escape and click "Restart" in the simulator to attempt a reconnect.
 
 ## How the robot's path is created:
 
