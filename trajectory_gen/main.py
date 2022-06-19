@@ -301,7 +301,7 @@ if __name__ == "__main__":
     plot_traj_points()
 
     # Export data to CSV
-    csv_out = open("output_traj.csv", "w")
+    csv_out = open("../nrc_ws/src/nrc_nav/src/output_traj.csv", "w")
     csv_out.write(HEADER)
     for traj_point in traj_pts:
         csv_out.write(traj_point.export_csv_string())

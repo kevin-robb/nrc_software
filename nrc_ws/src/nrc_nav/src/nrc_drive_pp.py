@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import rospy, rospkg
 
@@ -44,17 +44,18 @@ def generate_pure_pursuit_path():
         # add x,y coords from each point in the generated trajectory as waypoints.
         # this is better than just adding the 5 nodes as waypoints.
         pp.add_point(instructions[i][1], instructions[i][2])
-        interpolate_path(i) #TODO comment out when not debugging.
+        # interpolate the path to improve display. not necessary for functionality.
+        interpolate_path(i)
 
 def interpolate_path(i):
-    # interpolate straight sections and fill with more points
-    # this is useful for debugging and seeing the exact path
+    # interpolate straight sections and fill with more points.
+    # this is useful for debugging and seeing the exact path the robot is trying to stay on.
     if i < len(instructions) - 1:
         x_gap = instructions[i+1][1] - instructions[i][1]
         y_gap = instructions[i+1][2] - instructions[i][2]
         dist = sqrt(x_gap*x_gap + y_gap*y_gap)
         density = 20
-        # use min_dist to prevent expansion on curves that already have many points close together
+        # use min_dist to prevent expansion on curves that already have many points close together.
         min_dist = 2 #meters
         if dist > min_dist:
             x_incr = x_gap/density
@@ -63,7 +64,7 @@ def interpolate_path(i):
                 pp.add_point(instructions[i][1] + n*x_incr, instructions[i][2] + n*y_incr)
 
 def receive_position(local_pos):
-    # triggers when receiving position from David's localization code
+    # triggers when receiving position from localization code.
     global pos
     pos = (local_pos.x, local_pos.y)
 
@@ -154,7 +155,7 @@ if __name__ == "__main__":
     # OR create a hard coded path (small test course by lab)
     #generate_hard_path()
 
-    # get localization info from David's code
+    # get localization info.
     local_sub = rospy.Subscriber("/nrc/robot_state", LocalizationVector, receive_position, queue_size=1)
     # get heading from a DriveStatus
     status_sub = rospy.Subscriber("/nrc/sensor_data", DriveStatus, receive_heading, queue_size=1)
