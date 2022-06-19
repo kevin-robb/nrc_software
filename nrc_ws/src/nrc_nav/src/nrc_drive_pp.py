@@ -27,28 +27,17 @@ integrator = 0
 last_error = 0.0
 last_time = time.time()
 
-# def gen_pp_path_from_traj():
-#     global pp
-#     pp = PurePursuit()
-#     for i in range(len(instructions)):
-#         # add x,y coords from each point in the generated trajectory as waypoints.
-#         # this is better than just adding the 5 nodes as waypoints.
-#         pp.add_point(instructions[i][1], instructions[i][2])
-#         # interpolate straight sections and fill with more points
-#         if i < len(instructions) - 1:
-#             x_gap = instructions[i][1] - instructions[i+1][1]
-#             y_gap = instructions[i][2] - instructions[i+1][2]
-#             density = 20
-#             if abs(x_gap) > 2:
-#                 incr = x_gap / density
-#                 for n in range(density):
-#                     pp.add_point(instructions[i][1] - n*incr, instructions[i][2])
-#             elif abs(y_gap) > 2:
-#                 incr = y_gap / density
-#                 for n in range(density):
-#                     pp.add_point(instructions[i][1], instructions[i][2] - n*incr)
+def generate_hard_path():
+    global pp
+    pp = PurePursuit()
+    # this creates a path manually set by changing waypoints here.
+    # used for testing the robot on a small course by the lab.
+    pp.add_point(0, -1)
+    pp.add_point(2, -1)
+    pp.add_point(2, 1)
+    pp.add_point(0, 1)
 
-def gen_pp_path_from_traj():
+def generate_pure_pursuit_path():
     global pp
     pp = PurePursuit()
     for i in range(len(instructions)):
@@ -86,7 +75,7 @@ def receive_position(local_pos):
 def receive_heading(status):
     # triggers when sensors (IMU) publish sensor data, including yaw
     global heading
-    heading = 360 - status.yaw
+    heading = status.yaw
 
 def generate_motor_command(timer_event): 
     global integrator, last_time, last_error
@@ -102,7 +91,7 @@ def generate_motor_command(timer_event):
     # declare the look-ahead point
     lookahead = None
     # start with a search radius of 0.4 meters
-    radius = 3 #0.4
+    radius = 0.4 #0.4
 
     # look until finding the path at the increasing radius or hitting 2 meters
     while lookahead is None and radius <= 6: 
@@ -115,7 +104,7 @@ def generate_motor_command(timer_event):
 
     # make sure we actually found the path
     if lookahead is not None:
-        heading_to_la = degrees(atan2(lookahead[1] - cur_pos[1], lookahead[0] - cur_pos[0]))
+        heading_to_la = -degrees(atan2(lookahead[1] - cur_pos[1], lookahead[0] - cur_pos[0]))
         if heading_to_la <= 0:
             heading_to_la += 360
 
@@ -132,16 +121,12 @@ def generate_motor_command(timer_event):
         integrator += error * time_diff
         slope = (error - last_error) / time_diff
 
-        P = 0.005 * error #was 0.002
-        max_P = 0.25
-        if abs(P) > max_P:
-            # cap P and maintain sign
-            P *= max_P/P
-        I = 0.00001 * integrator
+        P = 0.006 * error #was 0.002
+        I = 0 * integrator
         D = 0.0001 * slope
 
-        drive_power = 1.5
-        turn_power = P + I + D
+        drive_power = 0.5 * (1 - abs(delta / 180))**5
+        turn_power = P
 
         last_error = error
         last_time = time.time()
@@ -165,10 +150,12 @@ if __name__ == "__main__":
     # will need to make sure to copy file into this directory after creating it in trajectory_gen
     instructions = genfromtxt(filepath + 'output_traj.csv', delimiter=',', skip_header=1, names="time,x,y,velocity,accel,heading")
 
-    # create the pure pursuit path using the generated trajectory
-    gen_pp_path_from_traj()
+    # create the pure pursuit path using the generated trajectory (sim or real course)
+    generate_pure_pursuit_path()
+    # OR create a hard coded path (small test course by lab)
+    #generate_hard_path()
 
-    # get localization info from David's code
+    # get localization info.
     local_sub = rospy.Subscriber("/nrc/robot_state", LocalizationVector, receive_position, queue_size=1)
     # get heading from a DriveStatus
     status_sub = rospy.Subscriber("/nrc/sensor_data", DriveStatus, receive_heading, queue_size=1)
